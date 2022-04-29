@@ -1,0 +1,4 @@
+f = open("Studentname1.txt",'x')
+f = open("Studentname1.txt",'w')
+f.write("Name1 \n Name2 \n Name3 \n Name4 \n Name5 ") #the number of names have to be added manually,this process can also be made easier using a for loop;
+f.close()
