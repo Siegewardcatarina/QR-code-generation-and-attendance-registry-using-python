@@ -1,19 +1,24 @@
+import csv
 from MyQR import myqr
 import os
-
-f = open('Studentname1.txt','r')
-lines = f.read().split("\n")
-print(lines)
-
-for i in range (0,len(lines)):
-    data = lines[i]
-    version, level, qr = myqr.run(
-        str(data),
-        level='H',
-        picture="Bg.png",
-        colorized=True,
-        contrast=1.0,
-        brightness=1.0,
-        save_name = str(lines[i]+'.png'),
-        save_dir=os.getcwd()
-    )
+names = []
+with open('studentnames1.csv', 'rt') as f:
+    data = csv.reader(f)
+    for x in data:
+        names.append(x)
+print(names)
+for i in names:
+    print(i)
+    try:
+        version, level, qr = myqr.run(  # to add a background image and save as .png
+            words = i[0],
+            level='H',
+            picture="Bg.png",
+            colorized=True,
+            contrast=1.0,
+            brightness=1.0,
+            save_name=str(i[0] + '.png'),
+            save_dir=os.getcwd(),
+        )
+    except OSError:
+        print(f"Error occured while processing {i} ")
