@@ -1,66 +1,66 @@
-#Start Of Code
+# Start Of Code
 
-#Libraries
-import cv2                 #For opening and using Camera
-import pyzbar.pyzbar as pb #For Scanning and Decoding QR and Bar codes
-import time                #For using Delay function
-import datetime            #For Taking input of Date and Time from System
-
-#date1=datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
+# Libraries
+import csv
+import cv2                 # For opening and using Camera
+import pyzbar.pyzbar as pb # For Scanning and Decoding QR and Bar codes
+import time                # For using Delay function
+import datetime            # For Taking input of Date and Time from System
 
 filename = datetime.datetime.now()
-
-# Function creates an empty file
-# %d - date, %B - month, %Y - Year
-#with open(filename.strftime("%d %B %Y")+".txt", "a") as file:
-#   file.write("")
 
 # starting the webcam using opencv
 cap = cv2.VideoCapture(0)
 
-#Necessary initializations
-fob = open('Studentname1.txt', 'w+')         #file initialized
-names = []                                   #names list initialized
-
-#file = open('Attendance.txt','w')
+# Necessary initializations
+studentnames = []
+with open('studentnames1.csv', 'rt') as f:
+    data = csv.reader(f)
+    for i in data:
+        studentnames.append(i[0])
+print(studentnames)
+names = []
 
 # function for writing the data into text file
-def enterData(z):
-    if z in names:
-        pass
-    else:
-        names.append(z)
-        z = ''.join(str(z))
-        fob.write(z + '\n')
-    return names                             #Produces individual names as function output
 
 print('Reading the QR...')
 
+
 # function for check the data is present or not
-def checkData(data):                         #if Name is marked already displays 'Already present as output else Marks attendance
-    data = str(data)
-    if data in names:
-        print('Already Present')
+
+def checkData(data):                         # if Name is marked already displays 'Already present as output else Marks attendance
+    file = open(filename.strftime("%d_%B_%Y") + ".csv", 'a')
+    data = str(data)[2:-1]
+    print(data)
+    if data in studentnames:
+        if data in names and data:
+            print('Already Present')
+            pass
+        else:
+            file.write(data + "\n ")
+            names.append(data)
+        file.close()
     else:
-        with open(filename.strftime("%d %B %Y") + ".txt", "a") as file:
-            file.write(data + '\n')
-        print('\n' + str(len(names) + 1) + '\n' + data)
-        enterData(data)
+        print("unauthorized student scanned QR code")
+        print(data)
+        pass
 
-while True:
-    i, frame = cap.read()
-    decodedObjects = pb.decode(frame)        #Decodes the QR from frame using pyzbar
-    for obj in decodedObjects:
-        checkData(obj.data)
-        time.sleep(1)                        #Delay of 1 second
 
-    cv2.imshow("QR Scanner", frame) #Name of the Frame and variable assigned
+if __name__ == '__main__':
+    while True:
+        i, frame = cap.read()
+        decodedObjects = pb.decode(frame)        # Decodes the QR from frame using pyzbar
+        for obj in decodedObjects:
+            checkData(obj.data)
+            time.sleep(1)                        # Delay of 1 second
 
-# closing the program when s is pressed
-    if cv2.waitKey(20) & 0xFF == ord('q'):  # 'Q'/'q' when pressed stop the program
-        break
+        cv2.imshow("QR Scanner", frame)          # Name of the Frame and variable assigned
 
-# When everything done, release the capture
-cap.release()
-cv2.destroyAllWindows()
-fob.close() #Closing the file
+    # Closing the program when Q/q is pressed
+        if cv2.waitKey(20) & 0xFF == ord('q'):   # 'Q'/'q' when pressed stop the program
+            break
+
+    # When everything done, release the capture
+    cap.release()
+    cv2.destroyAllWindows()
+    f.close()                                                 # Closing the file
